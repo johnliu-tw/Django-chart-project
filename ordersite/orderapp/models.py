@@ -7,6 +7,6 @@ class Order(models.Model):
     created_at = models.DateTimeField('date')
 
 class OrderItem(models.Model):
-    order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product_name = models.CharField(max_length=200)
     qty = models.IntegerField(default=0)

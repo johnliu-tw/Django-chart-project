@@ -36,7 +36,7 @@ def index(request):
     plot.axis.visible=False
     plot.grid.grid_line_color = None
 
-    # get customer bought data
+    # get customer ordered data
     time_list = set([time.strftime("%Y-%m-%d") for time in orders.values_list('created_at', flat=True)])
     time_list = sorted(time_list)
     orders_time_ordered = [[],[]]
@@ -47,10 +47,25 @@ def index(request):
         orders_time_ordered[1].append(time)
         orders_time_ordered_list.append({'order_date_count': order_date_count, 'time': time})
         
-    plot2 = figure(plot_width=1000, plot_height=350, title="Customer Bought Cohort", x_range=orders_time_ordered[1])
+    plot2 = figure(plot_width=1000, plot_height=350, title="Customer Ordered Cohort", x_range=orders_time_ordered[1])
     plot2.line(orders_time_ordered[1], orders_time_ordered[0])
 
-    
+    # get cutomer bought quantity data
+    orders_time_bought = [[],[]]
+    orders_time_bought_list = []
+    per_order_quantity_list = OrderItem.objects.values('order').annotate(qty=Sum('qty')).values('order','qty')
+    for time in time_list:
+        order_ids = list(Order.objects.filter(created_at=time).values_list('id', flat=True))
+        per_day_order_quantity_list = [d for d in per_order_quantity_list if d['order'] in order_ids]
+        orders_time_bought[1].append(time)
+        orders_time_bought[0].append(0)        
+        for per_day_order_quantity in per_day_order_quantity_list:
+            orders_time_bought[0][-1] += per_day_order_quantity['qty']
+        orders_time_bought_list.append({'orders_time_bought': orders_time_bought[0][-1], 'time': time})
+
+    plot3 = figure(plot_width=1000, plot_height=350, title="Customer Bought Cohort", x_range=orders_time_bought[1])
+    plot3.line(orders_time_bought[1], orders_time_bought[0])    
+
     # get popular products
     popular_product_lists = OrderItem.objects.values('product_name').annotate(qty = Sum('qty')).order_by('-qty')[:3]
     popular_products = [[],[]]
@@ -59,22 +74,26 @@ def index(request):
         popular_products[1].append(product['qty'])
     
     print(popular_products)
-    plot3 = figure(plot_width=1000, plot_height=400, title="Popular Product List", x_range=popular_products[0])
-    plot3.vbar(x=popular_products[0], top=popular_products[1], width=0.9, color=['firebrick','coral','wheat'])
+    plot4 = figure(plot_width=1000, plot_height=400, title="Popular Product List", x_range=popular_products[0])
+    plot4.vbar(x=popular_products[0], top=popular_products[1], width=0.9, color=['firebrick','coral','wheat'])
     layouts = column(plot, plot2)
 
     script, div = components(layouts)
     script2, div2 = components(plot3)
+    script3, div3 = components(plot4)
 
     template = loader.get_template('orderapp/index.html')
     context = {
         'orders_time_ordered': orders_time_ordered,
         'popular_product_lists': popular_product_lists,
         'orders_time_ordered_list': orders_time_ordered_list,
+        'orders_time_bought_list': orders_time_bought_list,
         'script': script,
         'script2': script2,
+        'script3': script3,
         'div': div,
-        'div2': div2
+        'div2': div2,
+        'div3': div3
 
     }
     return HttpResponse(template.render(context, request))
