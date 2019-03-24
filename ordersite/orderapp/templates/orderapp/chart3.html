@@ -1,0 +1,26 @@
+<html>
+<head>
+    {% include "orderapp/common_head.html" %}
+    {{ script | safe }}
+    <title>Djange Data Chart Project</title>
+</head>
+<body>
+    {% include "orderapp/nav.html" %}
+    {{div|safe}}
+    <table class="table ml-4" style="width:50%; font-size: 12px;">
+        <thead class="thead-dark">
+            <tr>
+                <th>Product Name</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for item in popular_product_lists %}
+          <tr>
+              <td>{{ item.product_name }}</td>
+              <td>{{ item.qty }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+</body>

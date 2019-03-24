@@ -1,0 +1,42 @@
+<html>
+<head>
+    {% include "orderapp/common_head.html" %}
+    {{ script | safe }}
+    <title>Djange Data Chart Project</title>
+</head>
+<body>
+    {% include "orderapp/nav.html" %}
+    {{div|safe}}
+    <table class="table ml-4" style="display:inline-block; width:20%; font-size: 12px;">
+        <thead class="thead-dark">
+            <tr>
+                <th>Date</th>
+                <th>Ordered Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders_time_ordered_list %}
+            <tr>
+                <td>{{ order.time }}</td>
+                <td>{{ order.order_date_count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>   
+    <table class="table" style="display:inline-block; width:20%; font-size: 12px;">
+        <thead class="thead-dark">
+            <tr>
+                <th>Date</th>
+                <th>Bought Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders_time_bought_list %}
+            <tr>
+                <td>{{ order.time }}</td>
+                <td>{{ order.orders_time_bought }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>  
+</body>
