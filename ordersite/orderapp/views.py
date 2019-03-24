@@ -60,7 +60,7 @@ def chart2(request):
     context = {
         'orders_time_ordered': orders_time_ordered,
         'orders_time_ordered_list': orders_time_ordered_list,
-        'popular_product_lists': popular_product_lists,
+        'orders_time_bought_list': orders_time_bought_list,
         'script': script,
         'div': div,
     }
