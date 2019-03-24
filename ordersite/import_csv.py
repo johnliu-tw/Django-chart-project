@@ -19,5 +19,5 @@ with open('order_item.csv') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         order = Order.objects.get(id=int(row['order_id']))
-        p = OrderItem(order_id= order, product_name=row['product_name'], qty=int(row['qty']))
+        p = OrderItem(order= order, product_name=row['product_name'], qty=int(row['qty']))
         p.save()
